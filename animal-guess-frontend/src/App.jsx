@@ -1,12 +1,21 @@
-import AnimalGuess from './components/AnimalGuess';
+import React from "react";
+import AnimalGuess from "./components/AnimalGuess";
 
-function App() {
+export default function App() {
   return (
-    <div style={{ padding: '20px' }}>
-      <h1>🐾 Guess the Animal!</h1>
+    <div
+      style={{
+        minHeight: "100vh",
+        minWidth: "100vw",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        margin: 0,
+        padding: 0,
+        boxSizing: "border-box",
+      }}
+    >
       <AnimalGuess />
     </div>
   );
 }
-
-export default App;

@@ -37,7 +37,7 @@ class RandomAnimalView(APIView):
             }
             return Response(clue)
         return Response({'error': 'No animals available'}, status=404)
-from rest_framework.decorators import api_view
+
 
 @api_view(['POST'])
 def guess_animal(request):

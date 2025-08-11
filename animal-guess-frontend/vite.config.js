@@ -1,7 +1,23 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
-// https://vite.dev/config/
+// https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
+  server: {
+    proxy: {
+      // Proxy all requests starting with /api to Django backend
+      '/api': {
+        target: 'http://localhost:8000', // Django backend URL
+        changeOrigin: true,
+        secure: false,
+      },
+      // If you have another backend path (example: /media)
+      '/media': {
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+        secure: false,
+      }
+    }
+  }
 })

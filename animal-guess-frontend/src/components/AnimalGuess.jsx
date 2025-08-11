@@ -1,7 +1,8 @@
-// ...existing imports...
 import { useState } from 'react';
 import axios from 'axios';
-import { Box, Button, Card, CardContent, CardMedia, Typography, TextField } from '@mui/material';
+
+import AnimalGuessLayout from './AnimalGuessLayout';
+
 
 const AnimalGuess = () => {
   const [animal, setAnimal] = useState(null);
@@ -13,7 +14,7 @@ const AnimalGuess = () => {
     setFeedback('');
     setGuess('');
     try {
-      const response = await axios.get('http://localhost:8000/api/random-animal/', {
+      const response = await axios.get('/api/random-animal/', {
         withCredentials: true,
       });
       setAnimal(response.data);
@@ -24,10 +25,14 @@ const AnimalGuess = () => {
 
   const submitGuess = async () => {
     try {
-      const response = await axios.post('http://localhost:8000/api/guess-animal/', {
-        id: animal.id,
-        guess: guess,
-      }, { withCredentials: true });
+      const response = await axios.post(
+        '/api/guess-animal/',
+        {
+          id: animal.id,
+          guess: guess,
+        },
+        { withCredentials: true }
+      );
       if (response.data.correct) {
         setFeedback(`Correct! The animal is ${response.data.answer}.`);
       } else {
@@ -51,51 +56,18 @@ const AnimalGuess = () => {
   };
 
   return (
-    <Box>
-      <Typography variant="h4" gutterBottom>Guess the Animal!</Typography>
-      {!animal && !gameOver && (
-        <Button variant="contained" onClick={fetchNextAnimal}>Start Game</Button>
-      )}
-
-      {animal && (
-        <Card sx={{ maxWidth: 345, my: 2 }}>
-          <CardMedia
-            component="img"
-            height="200"
-            image={`http://localhost:8000${animal.image}`}
-            alt="Animal clue"
-          />
-          <CardContent>
-            <Typography variant="body1">
-              Clue: Name starts with <b>{animal.first_letter}</b> and has {animal.name_length} letters.
-            </Typography>
-            <TextField
-              label="Your Guess"
-              value={guess}
-              onChange={e => setGuess(e.target.value)}
-              sx={{ my: 2 }}
-            />
-            <Button variant="contained" onClick={submitGuess}>Submit Guess</Button>
-            {feedback && <Typography sx={{ mt: 2 }}>{feedback}</Typography>}
-          </CardContent>
-        </Card>
-      )}
-
-      {animal && (
-        <Box>
-          <Button variant="outlined" onClick={fetchNextAnimal}>Next Animal</Button>
-          <Button variant="text" color="error" onClick={stopGame}>Stop</Button>
-        </Box>
-      )}
-
-      {gameOver && (
-        <Box>
-          <Typography variant="body1" sx={{ my: 2 }}>Game over!</Typography>
-          <Button variant="contained" onClick={resetGame}>Restart</Button>
-        </Box>
-      )}
-    </Box>
-  );
+  <AnimalGuessLayout
+    animal={animal}
+    guess={guess}
+    setGuess={setGuess}
+    submitGuess={submitGuess}
+    feedback={feedback}
+    fetchNextAnimal={fetchNextAnimal}
+    stopGame={stopGame}
+    gameOver={gameOver}
+    resetGame={resetGame}
+  />
+);
 };
 
 export default AnimalGuess;
