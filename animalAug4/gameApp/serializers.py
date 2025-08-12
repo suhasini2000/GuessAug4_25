@@ -4,4 +4,5 @@ from .models import Animal
 class AnimalSerializer(serializers.ModelSerializer):
     class Meta:
         model = Animal
-        fields = ['id', 'name', 'image', 'uploaded_at']
+        fields =  '__all__'  # Include all fields from the Animal model
+        read_only_fields = ['id', 'uploaded_at']  # Make id and uploaded_at read-only
