@@ -14,6 +14,8 @@ from rest_framework.decorators import api_view,permission_classes
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser, FormParser
+from django.contrib.auth import authenticate, login
+
 
 
 
@@ -83,6 +85,7 @@ class AnimalSearchView(APIView):
 def user_login(request):
     username = request.data.get('username')
     password = request.data.get('password')
+
     try:
         user = GameUser.objects.get(username=username, password=password)
         return Response({"success": True, "message": "Login successful"})
@@ -120,19 +123,32 @@ class AddAnimalView(View):
         return render(request, 'add_animal.html', {"error": "All fields are required!"})
 
 class RandomAnimalView(APIView):
+    permission_classes = []  # No authentication required
+
     def get(self, request):
         animals = list(Animal.objects.all())
+        print("Animals in DB:", animals)  # Debug: See if animals are fetched
+
         if animals:
             animal = random.choice(animals)
             clue = {
                 "id": animal.id,
-                "image": animal.image.url if animal.image else "",
+                "image": request.build_absolute_uri(animal.image.url) if animal.image else "",
                 "first_letter": animal.name[0],
                 "last_letter": animal.name[-1],
                 "name_length": len(animal.name),
             }
+            print("Chosen animal:", clue)  # Debug: See what we send
             return Response(clue)
+
+        print("No animals found in DB")  # Debug
         return Response({'error': 'No animals available'}, status=404)
+
+@api_view(['GET'])
+def all_animals(request):
+    animals = Animal.objects.all()
+    serializer = AnimalSerializer(animals, many=True)
+    return Response(serializer.data)
 
 
 @api_view(['POST'])

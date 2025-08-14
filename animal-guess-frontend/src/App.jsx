@@ -6,9 +6,12 @@ import AdminLogin from "./pages/AdminLogin";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Games from "./pages/Games";
+
 import UserLogin from "./pages/UserLogin";
 import AddAnimal from "./pages/AddAnimal";
 import Home from "./pages/Home"; // ✅ Create this page if not already
+import AnimalGuess from "./components/AnimalGuess"; 
+
 
 export default function App() {
   return (
@@ -22,7 +25,9 @@ export default function App() {
         <Route path="/admin-login" element={<AdminLogin />} />
         <Route path="/user-login" element={<UserLogin />} />
         <Route path="/add-animal" element={<AddAnimal />} />
-
+        <Route path="/guess-animal" element={<AnimalGuess />} />
+        <Route path="/games" element={<Games/>}/>
+        {/* Protected Routes */}
         <Route
           path="/admin-dashboard"
           element={
