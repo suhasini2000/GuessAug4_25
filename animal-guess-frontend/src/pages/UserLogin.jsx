@@ -20,7 +20,7 @@ export default function UserLogin() {
 
   const handleSignIn = async () => {
     try {
-      const res = await axios.post("http://localhost:8000/api/user-login/", signInData);
+      const res = await axios.post("http://localhost:8000/user-login/", signInData);
       if (res.data.success) {
         navigate("/games"); // Go to games page
       } else {
@@ -33,7 +33,7 @@ export default function UserLogin() {
 
   const handleSignUp = async () => {
     try {
-      const res = await axios.post("http://localhost:8000/api/user-register/", signUpData);
+      const res = await axios.post("http://localhost:8000/user-register/", signUpData);
       if (res.data.success) {
         alert("Registered successfully! Please sign in.");
         setTab(0);

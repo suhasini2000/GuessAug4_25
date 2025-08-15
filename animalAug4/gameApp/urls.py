@@ -16,7 +16,7 @@ urlpatterns = [
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 
     # Admin check
-    path('check-admin/', check_admin, name='check_admin'),
+    path('api/check-admin/', check_admin, name='check_admin'),
 
     # Animal API
     path('animals/', AnimalListCreateView.as_view(), name='animal_list_create'),
@@ -24,8 +24,8 @@ urlpatterns = [
     path('animals/search/', AnimalSearchView.as_view(), name='animal_search'),
     path('user-login/', user_login),
     path('user-register/', user_register),
-    path('random-animal/', RandomAnimalView.as_view(), name='random_animal'),   
-    path('guess-animal/', guess_animal, name='guess_animal'),  # <-- add this
+    path('api/random-animal/', RandomAnimalView.as_view(), name='random_animal'),   
+    path('api/guess-animal/', guess_animal, name='guess_animal'),  # <-- add this
 
     
 
