@@ -15,8 +15,12 @@ from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser, FormParser
 from django.contrib.auth import authenticate, login
+from django.http import JsonResponse
 
 
+def animal_count(request):
+    count = Animal.objects.count()
+    return JsonResponse({'count': count})
 
 
 @api_view(['GET'])
@@ -122,27 +126,54 @@ class AddAnimalView(View):
 
         return render(request, 'add_animal.html', {"error": "All fields are required!"})
 
+import random
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from .models import Animal
+
+import random
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from .models import Animal
+
 class RandomAnimalView(APIView):
     permission_classes = []  # No authentication required
 
     def get(self, request):
         animals = list(Animal.objects.all())
-        print("Animals in DB:", animals)  # Debug: See if animals are fetched
 
-        if animals:
-            animal = random.choice(animals)
-            clue = {
-                "id": animal.id,
-                "image": request.build_absolute_uri(animal.image.url) if animal.image else "",
-                "first_letter": animal.name[0],
-                "last_letter": animal.name[-1],
-                "name_length": len(animal.name),
-            }
-            print("Chosen animal:", clue)  # Debug: See what we send
-            return Response(clue)
+        if not animals:
+            return Response({'error': 'No animals available'}, status=404)
 
-        print("No animals found in DB")  # Debug
-        return Response({'error': 'No animals available'}, status=404)
+        shown_ids = request.session.get("shown_animal_ids", [])
+
+        # If all animals have been shown, reset for a new round
+        if len(shown_ids) >= len(animals):
+            shown_ids = []
+
+        # Get available animals not shown yet in this round
+        available_animals = [a for a in animals if a.id not in shown_ids]
+
+        # Pick one randomly
+        animal = random.choice(available_animals)
+
+        # Add to session tracking
+        shown_ids.append(animal.id)
+        request.session["shown_animal_ids"] = shown_ids
+        request.session.modified = True
+
+        # Prepare clue
+        clue = {
+            "id": animal.id,
+            "image": request.build_absolute_uri(animal.image.url) if animal.image else "",
+            "first_letter": animal.name[0],
+            "last_letter": animal.name[-1],
+            "name_length": len(animal.name),
+        }
+
+        return Response(clue)
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 
 @api_view(['GET'])
 def all_animals(request):

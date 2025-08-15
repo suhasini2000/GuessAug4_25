@@ -48,7 +48,8 @@ const AnimalGuessLayout = ({
         </>
       )}
 
-      {gameOver && <GameOver resetGame={resetGame} />}
+      {gameOver &&
+       <GameOver resetGame={resetGame} />}
     </Box>
   </Box>
 );
