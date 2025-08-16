@@ -10,6 +10,8 @@ const AnimalGuess = () => {
   const [gameOver, setGameOver] = useState(false);
   const [shownAnimals, setShownAnimals] = useState([]); // Track shown animal IDs
   const [totalAnimals, setTotalAnimals] = useState(null); 
+  const [score, setScore] = useState(0);
+
   
   useEffect(() => {
     const fetchTotal = async () => {
@@ -69,6 +71,8 @@ const AnimalGuess = () => {
       );
       if (response.data.correct) {
         setFeedback(`Correct! The animal is ${response.data.answer}.`);
+        setScore(prev => prev + 1);  
+
       } else {
         setFeedback('Incorrect. Try again!');
       }
@@ -88,6 +92,7 @@ const AnimalGuess = () => {
     setGameOver(false);
     setShownAnimals([]); // Reset shown animals
     fetchNextAnimal();
+    setScore(0); 
   };
 
   return (
@@ -101,6 +106,9 @@ const AnimalGuess = () => {
       stopGame={stopGame}
       gameOver={gameOver}
       resetGame={resetGame}
+      score={score}
+      totalAnimals={totalAnimals}
+
     />
   );
 };

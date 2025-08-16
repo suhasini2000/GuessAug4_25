@@ -4,11 +4,7 @@ export default function Games() {
   const navigate = useNavigate();
   const gameList = [
     { name: "Guess Animal", path: "/guess-animal" },
-    { name: "Chess", path: "/chess" },
-    { name: "Sudoku", path: "/sudoku" },
-    { name: "Snake", path: "/snake" },
-    { name: "Tic-Tac-Toe", path: "/tic-tac-toe" },
-    { name: "Memory Match", path: "/memory-match" }
+    { name: "Guess Number", path: "/guess-number" }
   ];
 
   return (

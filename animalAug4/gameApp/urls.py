@@ -8,7 +8,7 @@ from .views import (
 guess_animal
 )
 from .views import user_login, user_register
-from .import views
+
 
 urlpatterns = [
     # JWT Authentication
@@ -25,9 +25,8 @@ urlpatterns = [
     path('user-login/', user_login),
     path('user-register/', user_register),
     path('api/random-animal/', RandomAnimalView.as_view(), name='random_animal'),   
-    path('api/guess-animal/', guess_animal, name='guess_animal'),  # <-- add this
-    path('api/animals/count/', views.animal_count, name='animal_count'),
-
+    path('api/guess-animal/', guess_animal, name='guess_animal'),
+    
 
 
 ]

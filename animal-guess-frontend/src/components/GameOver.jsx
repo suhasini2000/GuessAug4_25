@@ -1,12 +1,17 @@
-import { Box, Typography, Button } from '@mui/material';
+import { Box, Button, Typography } from '@mui/material';
 
-const GameOver = ({ resetGame }) => (
+const GameOver = ({ resetGame, score, totalAnimals }) => (
   <Box>
-    <Typography variant="body1" sx={{ my: 2 }}>
-      Game over!
+    <Typography variant="h5" gutterBottom>
+       Game Over!
     </Typography>
+
+    <Typography variant="h6" gutterBottom>
+       Your Final Score: {score} / {totalAnimals ?? 0}
+    </Typography>
+
     <Button variant="contained" onClick={resetGame}>
-      Restart
+      Play Again
     </Button>
   </Box>
 );
