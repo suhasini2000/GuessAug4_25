@@ -46,7 +46,7 @@ const AnimalGuessLayout = ({
             submitGuess={submitGuess}
             feedback={feedback}
           />
-          <GameControls fetchNextAnimal={fetchNextAnimal} stopGame={stopGame} />
+        <GameControls fetchNextAnimal={fetchNextAnimal} stopGame={stopGame} />
         </>
       )}
 
