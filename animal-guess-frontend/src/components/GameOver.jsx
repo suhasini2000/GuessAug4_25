@@ -5,11 +5,8 @@ const GameOver = ({ resetGame, score, totalAnimals }) => (
     <Typography variant="h5" gutterBottom>
        Game Over!
     </Typography>
-
     <Typography variant="h6" gutterBottom>
-       Your Final Score: {score} / {totalAnimals ?? 0}
-    </Typography>
-
+    Your Final Score: {score ?? 0} / {totalAnimals !== null && totalAnimals !== undefined ? totalAnimals : "?"}    </Typography>
     <Button variant="contained" onClick={resetGame}>
       Play Again
     </Button>

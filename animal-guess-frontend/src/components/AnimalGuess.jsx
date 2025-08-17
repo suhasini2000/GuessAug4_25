@@ -12,74 +12,75 @@ const AnimalGuess = () => {
   const [totalAnimals, setTotalAnimals] = useState(null); 
   const [score, setScore] = useState(0);
 
-  
   useEffect(() => {
     const fetchTotal = async () => {
       try {
         const res = await axios.get('/api/animals/count/', { withCredentials: true });
         setTotalAnimals(res.data.count);
+        console.log("Total animals fetched:", res.data.count);
       } catch (error) {
-        setTotalAnimals(null);           
+        setTotalAnimals(null);   
+        console.error        
       }
     };
     fetchTotal();
   }, []);
 
   const fetchNextAnimal = async () => {
-    setFeedback('');
-    setGuess('');
-    try {
-      const response = await axios.get('/api/random-animal/', {
-        withCredentials: true,
-      });
-      if (!response.data || Object.keys(response.data).length === 0) {
-        setAnimal(null);
-        setGameOver(true);
-        setFeedback('No animals found. Game over!');
-        return;
-      }
-      // Check if animal already shown
-      if (shownAnimals.includes(response.data.id)) {
-        // Try again to get a new animal
-        if (shownAnimals.length >= 6) { // You know there are 6 animals
-          setAnimal(null);
-          setGameOver(true);
-          setFeedback('All animals guessed! Game over!');
-          return;
-        }
-        fetchNextAnimal();
-        return;
-      }
-      setAnimal(response.data);
-      setShownAnimals([...shownAnimals, response.data.id]);
-    } catch (error) {
+  try {
+    const response = await axios.get('/api/random-animal/', {
+      withCredentials: true,
+    });
+    if (!response.data || Object.keys(response.data).length === 0) {
       setAnimal(null);
       setGameOver(true);
       setFeedback('No animals found. Game over!');
+      return;
     }
-  };
-
-  const submitGuess = async () => {
-    try {
-      const response = await axios.post(
-        '/api/guess-animal/',
-        {
-          id: animal.id,
-          guess: guess,
-        },
-        { withCredentials: true }
-      );
-      if (response.data.correct) {
-        setFeedback(`Correct! The animal is ${response.data.answer}.`);
-        setScore(prev => prev + 1);  
-
-      } else {
-        setFeedback('Incorrect. Try again!');
+    // Check if animal already shown
+    if (shownAnimals.includes(response.data.id)) {
+      if (totalAnimals && shownAnimals.length >= totalAnimals) {
+        setAnimal(null);
+        setGameOver(true);
+        setFeedback('All animals guessed! Game over!');
+        return;
       }
-    } catch (error) {
-      setFeedback('Error checking guess.');
+      fetchNextAnimal();
+      return;
     }
-  };
+    setAnimal(response.data);
+    setShownAnimals([...shownAnimals, response.data.id]);
+    setGuess('');
+    
+  } catch (error) {
+    setAnimal(null);
+    setGameOver(true);
+    setFeedback('No animals found. Game over!');
+  }
+};
+  const submitGuess = async () => {
+  try {
+    const response = await axios.post(
+      '/api/guess-animal/',
+      {
+        id: animal.id,
+        guess: guess.trim().toLowerCase(), // Normalize input
+      },
+      { withCredentials: true }
+    );
+    if (response.data.correct) {
+      setFeedback(`Correct! The animal is ${response.data.answer}.`);
+      setScore(prev => prev + 1);
+      setTimeout(() => {
+        fetchNextAnimal();
+      }, 1000);
+    } else {
+      setFeedback('Incorrect. Try again!');
+    }
+  } catch (error) {
+    setFeedback('Error checking guess.');
+  }
+};
 
   const stopGame = () => {
     setAnimal(null);
@@ -91,8 +92,11 @@ const AnimalGuess = () => {
   const resetGame = () => {
     setGameOver(false);
     setShownAnimals([]); // Reset shown animals
+    setScore(0);         // Reset score before fetching new animal
+    setAnimal(null);
+    setGuess('');
+    setFeedback('');
     fetchNextAnimal();
-    setScore(0); 
   };
 
   return (
@@ -108,7 +112,6 @@ const AnimalGuess = () => {
       resetGame={resetGame}
       score={score}
       totalAnimals={totalAnimals}
-
     />
   );
 };

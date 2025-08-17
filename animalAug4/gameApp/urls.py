@@ -4,11 +4,13 @@ from .views import (
     check_admin,
     AnimalListCreateView,
     AnimalDetailView,
-    AnimalSearchView,RandomAnimalView ,      
-guess_animal
+    AnimalSearchView,
+    RandomAnimalView,
+    guess_animal,
+    AnimalCountView,
+    user_login,
+    user_register,
 )
-from .views import user_login, user_register
-
 
 urlpatterns = [
     # JWT Authentication
@@ -24,9 +26,7 @@ urlpatterns = [
     path('animals/search/', AnimalSearchView.as_view(), name='animal_search'),
     path('user-login/', user_login),
     path('user-register/', user_register),
-    path('api/random-animal/', RandomAnimalView.as_view(), name='random_animal'),   
+    path('api/random-animal/', RandomAnimalView.as_view(), name='random_animal'),
     path('api/guess-animal/', guess_animal, name='guess_animal'),
-    
-
-
+    path('api/animals/count/', AnimalCountView.as_view(), name='animal-count'),
 ]

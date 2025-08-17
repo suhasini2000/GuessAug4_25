@@ -14,7 +14,7 @@ const AnimalGuessLayout = ({
   gameOver,
   resetGame,
   score,
-  totalAnimals = 0, 
+  totalAnimals,
 }) => (
   <Box
     sx={{
@@ -30,11 +30,6 @@ const AnimalGuessLayout = ({
       <Typography variant="h4" gutterBottom>
         🐾 Guess the Animal!
       </Typography>
-      <Typography variant="body1" sx={{ mb: 2 }}>
-        score: {score}
-      </Typography>
-
-      
 
       {!animal && !gameOver && (
         <Button variant="contained" onClick={fetchNextAnimal}>
@@ -42,7 +37,7 @@ const AnimalGuessLayout = ({
         </Button>
       )}
 
-      {animal && (
+      {!gameOver && animal && (
         <>
           <AnimalClueCard
             animal={animal}
@@ -55,8 +50,13 @@ const AnimalGuessLayout = ({
         </>
       )}
 
-      {gameOver &&
-       <GameOver resetGame={resetGame} score={score} totalAnimals={totalAnimals}/>}
+      {gameOver && (
+        <GameOver
+          resetGame={resetGame}
+          score={score}
+          totalAnimals={totalAnimals}
+        />
+      )}
     </Box>
   </Box>
 );
