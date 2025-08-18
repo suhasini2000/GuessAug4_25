@@ -1,66 +1,75 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
-
+import { useNavigate } from "react-router-dom";
 
 export default function AdminDashboard() {
-  const [searchName, setSearchName] = useState("");
-  const [error, setError] = useState("");
   const navigate = useNavigate();
 
-
-  
-
-  const handleUpdateByName = async (e) => {
-    e.preventDefault();
-    setError("");
-    const accessToken = localStorage.getItem("access_token");
-    if (!accessToken) {
-      setError("You are not logged in. Please log in as admin.");
-      return;
-    }
-
-    try {
-      const res = await axios.get(`/api/animals/search/?name=${searchName}`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-
-      if (Array.isArray(res.data) && res.data.length > 0) {
-        navigate(`/update-animal/${res.data[0].id}`);
-      } else {
-        setError("Animal not found.");
-      }
-    } catch (err) {
-      if (err.response && err.response.status === 401) {
-        setError("Session expired or unauthorized. Please log in again.");
-      } else {
-        setError("Error searching for animal.");
-      }
-      console.error("Search error:", err);
-    }
-  };
-
   return (
-    <div style={{ padding: "2rem" }}>
-      <h1>Admin Dashboard</h1>
-      <ul>
-        <li>
-          <Link to="/add-animal">Add Animal</Link>
-        </li>
-        <li>
-          <Link to="/list-animals">List Animals</Link>
-        </li>
-        <li>
-          <Link to="/search-animal">Search Animal</Link>
-        </li>
-        <li>
-        <Link to="/update-animal">Update Animal</Link>
-        </li>
-      </ul>
-
-      
+    <div style={{
+      minHeight: "100vh",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      background: "linear-gradient(135deg, #f0fdfa 0%, #e0e7ff 100%)"
+    }}>
+      <div style={{
+        background: "#fff",
+        padding: "2rem 2.5rem",
+        borderRadius: "12px",
+        boxShadow: "0 4px 24px rgba(0,0,0,0.08)",
+        minWidth: "340px"
+      }}>
+        <h1 style={{ textAlign: "center", marginBottom: "2rem", color: "#2563eb" }}>
+          Admin Dashboard
+        </h1>
+        <ul style={{ listStyle: "none", padding: 0, marginBottom: "2rem" }}>
+          <li>
+            <button style={btnStyle} onClick={() => navigate("/add-animal")}>
+              Add Animal
+            </button>
+          </li>
+          <li>
+            <button style={btnStyle} onClick={() => navigate("/list-animals")}>
+              List Animals
+            </button>
+          </li>
+          <li>
+            <button style={btnStyle} onClick={() => navigate("/search-animal")}>
+              Search Animal
+            </button>
+          </li>
+          <li>
+            <button style={btnStyle} onClick={() => navigate("/update-animal")}>
+              Update Animal
+            </button>
+          </li>
+        </ul>
+        <button
+          style={{
+            ...btnStyle,
+            background: "#e11d48",
+            marginTop: "1rem"
+          }}
+          onClick={() => {
+            localStorage.removeItem("access_token");
+            navigate("/admin-login");
+          }}
+        >
+          Logout
+        </button>
+      </div>
     </div>
   );
 }
+
+const btnStyle = {
+  width: "100%",
+  padding: "0.75rem",
+  marginBottom: "1rem",
+  background: "#2563eb",
+  color: "#fff",
+  border: "none",
+  borderRadius: "6px",
+  fontWeight: "bold",
+  fontSize: "1rem",
+  cursor: "pointer"
+};

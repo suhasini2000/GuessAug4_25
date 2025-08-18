@@ -69,63 +69,148 @@ export default function UpdateAnimal() {
   };
 
   return (
-    <div style={{ padding: "2rem" }}>
-      
-      <h1>Update Animal</h1>
-      <form onSubmit={handleSearch}>
-        <input
-          type="text"
-          placeholder="Enter animal name"
-          value={searchName}
-          onChange={e => setSearchName(e.target.value)}
-          required
-        />
-        <button type="submit">Find & Update</button>
-      </form>
-      {error && <div style={{ color: "red" }}>{error}</div>}
-      {animal && (
-        <form onSubmit={handleUpdate}>
-          <div>
-            <label>Name:</label>
-            <input
-              type="text"
-              value={animal.name}
-              onChange={e => setAnimal({ ...animal, name: e.target.value })}
-              required
-            />
-          </div>
-          <div>
-            <label>Image URL:</label>
-            <input
-              type="text"
-              value={animal.image || ""}
-              readOnly
-            />
-          </div>
-          <div>
-            <label>Uploaded At:</label>
-            <input
-              type="text"
-              value={animal.uploaded_at || ""}
-              readOnly
-            />
-          </div>
-          <div>
-            <label>Image:</label>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={e => setAnimal({ ...animal, image: e.target.files[0] })}
-            />
-          </div>
-          <button type="submit">Update</button>
+    <div style={{
+      minHeight: "100vh",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      background: "linear-gradient(135deg, #e0e7ff 0%, #f0fdfa 100%)"
+    }}>
+      <div style={{
+        background: "#fff",
+        padding: "2rem 2.5rem",
+        borderRadius: "12px",
+        boxShadow: "0 4px 24px rgba(0,0,0,0.08)",
+        minWidth: "340px"
+      }}>
+        <button
+          onClick={() => navigate("/admin-dashboard")}
+          style={{
+            marginBottom: "1rem",
+            background: "#64748b",
+            color: "#fff",
+            border: "none",
+            borderRadius: "6px",
+            padding: "0.5rem 1rem",
+            fontWeight: "bold",
+            cursor: "pointer"
+          }}
+        >
+          Back to Dashboard
+        </button>
+        <h2 style={{ textAlign: "center", marginBottom: "1.5rem", color: "#2563eb" }}>
+          Update Animal
+        </h2>
+        <form onSubmit={handleSearch} style={{ marginBottom: "1.5rem" }}>
+          <input
+            type="text"
+            placeholder="Enter animal name"
+            value={searchName}
+            onChange={e => setSearchName(e.target.value)}
+            required
+            style={{
+              width: "70%",
+              padding: "0.5rem",
+              borderRadius: "6px",
+              border: "1px solid #cbd5e1",
+              marginRight: "0.5rem"
+            }}
+          />
+          <button
+            type="submit"
+            style={{
+              padding: "0.5rem 1rem",
+              background: "#2563eb",
+              color: "#fff",
+              border: "none",
+              borderRadius: "6px",
+              fontWeight: "bold",
+              cursor: "pointer"
+            }}
+          >
+            Find & Update
+          </button>
         </form>
-      )}
-
-      <button onClick={() => navigate("/admin-dashboard")}>
-        Go to Admin Dashboard
-      </button>
-      {message && <div style={{ color: "green" }}>{message}</div>}
+        {error && <div style={{ color: "red", marginBottom: "1rem", textAlign: "center" }}>{error}</div>}
+        {animal && (
+          <form onSubmit={handleUpdate}>
+            <div style={{ marginBottom: "1rem" }}>
+              <label>Name:</label>
+              <input
+                type="text"
+                value={animal.name}
+                onChange={e => setAnimal({ ...animal, name: e.target.value })}
+                required
+                style={{
+                  width: "100%",
+                  padding: "0.5rem",
+                  borderRadius: "6px",
+                  border: "1px solid #cbd5e1"
+                }}
+              />
+            </div>
+            <div style={{ marginBottom: "1rem" }}>
+              <label>Image URL:</label>
+              <input
+                type="text"
+                value={typeof animal.image === "string" ? animal.image : ""}
+                readOnly
+                style={{
+                  width: "100%",
+                  padding: "0.5rem",
+                  borderRadius: "6px",
+                  border: "1px solid #cbd5e1"
+                }}
+              />
+            </div>
+            <div style={{ marginBottom: "1rem" }}>
+              <label>Uploaded At:</label>
+              <input
+                type="text"
+                value={animal.uploaded_at || ""}
+                readOnly
+                style={{
+                  width: "100%",
+                  padding: "0.5rem",
+                  borderRadius: "6px",
+                  border: "1px solid #cbd5e1"
+                }}
+              />
+            </div>
+            <div style={{ marginBottom: "1rem" }}>
+              <label>Image:</label>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={e => setAnimal({ ...animal, image: e.target.files[0] })}
+                style={{
+                  width: "100%",
+                  padding: "0.5rem",
+                  borderRadius: "6px",
+                  border: "1px solid #cbd5e1"
+                }}
+              />
+            </div>
+            <button
+              type="submit"
+              style={{
+                width: "100%",
+                padding: "0.75rem",
+                background: "#2563eb",
+                color: "#fff",
+                border: "none",
+                borderRadius: "6px",
+                fontWeight: "bold",
+                fontSize: "1rem",
+                cursor: "pointer"
+              }}
+            >
+              Update
+            </button>
+            {message && <div style={{ color: "green", marginTop: "1rem", textAlign: "center" }}>{message}</div>}
+          </form>
+        )}
+      </div>
     </div>
   );
 }
