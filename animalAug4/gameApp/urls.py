@@ -9,26 +9,29 @@ from .views import (
     guess_animal,
     AnimalCountView,
     user_login,
-    user_register,AnimalUpdateByNameView
+    user_register,
+    AnimalUpdateByNameView
 )
 
 urlpatterns = [
     # JWT Authentication
-    path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 
     # Admin check
     path('api/check-admin/', check_admin, name='check_admin'),
 
     # Animal API
     path('api/animals/update-by-name/', AnimalUpdateByNameView.as_view(), name='animal_update_by_name'),
-
-    path('animals/', AnimalListCreateView.as_view(), name='animal_list_create'),
-    path('animals/<int:pk>/', AnimalDetailView.as_view(), name='animal_detail'),
+    path('api/animals/', AnimalListCreateView.as_view(), name='animal_list_create'),
+    path('api/animals/<int:pk>/', AnimalDetailView.as_view(), name='animal_detail'),
     path('api/animals/search/', AnimalSearchView.as_view(), name='animal_search'),
-    path('user-login/', user_login),
-    path('user-register/', user_register),
     path('api/random-animal/', RandomAnimalView.as_view(), name='random_animal'),
     path('api/guess-animal/', guess_animal, name='guess_animal'),
     path('api/animals/count/', AnimalCountView.as_view(), name='animal-count'),
+    path('api/animals/search/', AnimalSearchView.as_view(), name='animal_search'),
+
+    # User Auth
+    path('api/user-login/', user_login),
+    path('api/user-register/', user_register),
 ]

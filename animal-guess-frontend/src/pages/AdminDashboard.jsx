@@ -2,10 +2,14 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
+
 export default function AdminDashboard() {
   const [searchName, setSearchName] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
+
+
+  
 
   const handleUpdateByName = async (e) => {
     e.preventDefault();
@@ -49,25 +53,14 @@ export default function AdminDashboard() {
           <Link to="/list-animals">List Animals</Link>
         </li>
         <li>
-          <Link to="/delete-animal">Delete Animal</Link>
+          <Link to="/search-animal">Search Animal</Link>
         </li>
         <li>
-          <Link to="/search-animal">Search Animal</Link>
+        <Link to="/update-animal">Update Animal</Link>
         </li>
       </ul>
 
-      <h2>Update Animal by Name</h2>
-      <form onSubmit={handleUpdateByName}>
-        <input
-          type="text"
-          placeholder="Enter animal name"
-          value={searchName}
-          onChange={(e) => setSearchName(e.target.value)}
-          required
-        />
-        <button type="submit">Find & Update</button>
-      </form>
-      {error && <div style={{ color: "red" }}>{error}</div>}
+      
     </div>
   );
 }

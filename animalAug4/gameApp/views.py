@@ -99,9 +99,14 @@ class AnimalUpdateByNameView(APIView):
     def put(self, request):
         name = request.data.get("name")
         new_name = request.data.get("new_name")
+        image = request.FILES.get("image")  # Get uploaded image if present
+
         try:
             animal = Animal.objects.get(name=name)
-            animal.name = new_name
+            if new_name:
+                animal.name = new_name
+            if image:
+                animal.image = image
             animal.save()
             serializer = AnimalSerializer(animal)
             return Response(serializer.data)
@@ -132,15 +137,17 @@ class AnimalDetailView(APIView):
         animal.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-class SearchAnimalView(APIView):
+class AnimalSearchView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
     def get(self, request):
-        name = request.GET.get("name", "").lower()
-        try:
-            animal = Animal.objects.get(name__iexact=name)
-            serializer = AnimalSerializer(animal)
-            return Response(serializer.data, status=200)
-        except Animal.DoesNotExist:
-            return Response({"error": "Animal not found"}, status=404)
+        name = request.query_params.get('name', None)
+        if name:
+            animals = Animal.objects.filter(name__iexact=name)
+        else:
+            animals = Animal.objects.all()
+        serializer = AnimalSerializer(animals, many=True)
+        return Response(serializer.data)
 
 
 # Move user_login function outside the class and fix indentation
@@ -275,17 +282,6 @@ class AnimalDetailView(APIView):
         animal.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-class AnimalSearchView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
-
-    def get(self, request):
-        query = request.query_params.get('q', None)
-        if query:
-            animals = Animal.objects.filter(name__icontains=query)
-        else:
-            animals = Animal.objects.all()
-        serializer = AnimalSerializer(animals, many=True)
-        return Response(serializer.data)
     
 
 @api_view(['POST'])

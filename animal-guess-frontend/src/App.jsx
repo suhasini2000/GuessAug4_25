@@ -12,6 +12,8 @@ import AddAnimal from "./pages/AddAnimal";
 import Home from "./pages/Home"; 
 import AnimalGuess from "./components/AnimalGuess"; 
 import UpdateAnimal from "./pages/UpdateAnimal";
+import ListAnimals from "./pages/ListAnimals";
+import SearchAnimal from "./pages/SearchAnimal";
 
 
 export default function App() {
@@ -28,7 +30,10 @@ export default function App() {
         <Route path="/add-animal" element={<AddAnimal />} />
         <Route path="/guess-animal" element={<AnimalGuess />} />
         <Route path="/games" element={<Games/>}/>
+        <Route path="/update-animal" element={<UpdateAnimal />} />
         <Route path="/update-animal/:id" element={<UpdateAnimal />} />
+        <Route path="/list-animals" element={<ListAnimals />} />  
+        <Route path="/search-animal" element={<SearchAnimal />} />
         {/* Protected Routes */}
         <Route
           path="/admin-dashboard"
