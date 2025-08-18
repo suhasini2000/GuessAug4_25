@@ -9,8 +9,9 @@ import Games from "./pages/Games";
 
 import UserLogin from "./pages/UserLogin";
 import AddAnimal from "./pages/AddAnimal";
-import Home from "./pages/Home"; // ✅ Create this page if not already
+import Home from "./pages/Home"; 
 import AnimalGuess from "./components/AnimalGuess"; 
+import UpdateAnimal from "./pages/UpdateAnimal";
 
 
 export default function App() {
@@ -18,7 +19,7 @@ export default function App() {
     <Router>
       <NavBar />
       <Routes>
-        <Route path="/" element={<Home />} /> {/* ✅ Added Home route */}
+        <Route path="/" element={<Home />} /> 
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/games" element={<Games />} />
@@ -27,6 +28,7 @@ export default function App() {
         <Route path="/add-animal" element={<AddAnimal />} />
         <Route path="/guess-animal" element={<AnimalGuess />} />
         <Route path="/games" element={<Games/>}/>
+        <Route path="/update-animal/:id" element={<UpdateAnimal />} />
         {/* Protected Routes */}
         <Route
           path="/admin-dashboard"

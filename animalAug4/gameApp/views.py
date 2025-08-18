@@ -1,3 +1,4 @@
+from urllib import request
 from django.shortcuts import render
 from django.views import View
 from django.utils import timezone
@@ -92,7 +93,20 @@ class AnimalListCreateView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+class AnimalUpdateByNameView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
 
+    def put(self, request):
+        name = request.data.get("name")
+        new_name = request.data.get("new_name")
+        try:
+            animal = Animal.objects.get(name=name)
+            animal.name = new_name
+            animal.save()
+            serializer = AnimalSerializer(animal)
+            return Response(serializer.data)
+        except Animal.DoesNotExist:
+            return Response({"error": "Animal not found."}, status=status.HTTP_404_NOT_FOUND)
 
 class AnimalDetailView(APIView):
     permission_classes = [permissions.IsAuthenticated]
@@ -118,19 +132,18 @@ class AnimalDetailView(APIView):
         animal.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-class AnimalSearchView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
-
+class SearchAnimalView(APIView):
     def get(self, request):
-        query = request.query_params.get('q', None)
-        if query:
-            animals = Animal.objects.filter(name__icontains=query)
-        else:
-            animals = Animal.objects.all()
-        serializer = AnimalSerializer(animals, many=True)
-        return Response(serializer.data)
-    
+        name = request.GET.get("name", "").lower()
+        try:
+            animal = Animal.objects.get(name__iexact=name)
+            serializer = AnimalSerializer(animal)
+            return Response(serializer.data, status=200)
+        except Animal.DoesNotExist:
+            return Response({"error": "Animal not found"}, status=404)
 
+
+# Move user_login function outside the class and fix indentation
 @api_view(['POST'])
 def user_login(request):
     username = request.data.get('username')

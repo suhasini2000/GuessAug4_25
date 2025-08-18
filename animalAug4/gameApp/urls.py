@@ -9,7 +9,7 @@ from .views import (
     guess_animal,
     AnimalCountView,
     user_login,
-    user_register,
+    user_register,AnimalUpdateByNameView
 )
 
 urlpatterns = [
@@ -21,9 +21,11 @@ urlpatterns = [
     path('api/check-admin/', check_admin, name='check_admin'),
 
     # Animal API
+    path('api/animals/update-by-name/', AnimalUpdateByNameView.as_view(), name='animal_update_by_name'),
+
     path('animals/', AnimalListCreateView.as_view(), name='animal_list_create'),
     path('animals/<int:pk>/', AnimalDetailView.as_view(), name='animal_detail'),
-    path('animals/search/', AnimalSearchView.as_view(), name='animal_search'),
+    path('api/animals/search/', AnimalSearchView.as_view(), name='animal_search'),
     path('user-login/', user_login),
     path('user-register/', user_register),
     path('api/random-animal/', RandomAnimalView.as_view(), name='random_animal'),
