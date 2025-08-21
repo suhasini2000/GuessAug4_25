@@ -1,93 +1,193 @@
-// src/pages/UserLogin.jsx
-import React, { useState } from "react";
-import { Tabs, Tab, TextField, Button, Box } from "@mui/material";
+import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 export default function UserLogin() {
-  const [tab, setTab] = useState(0);
+  const [tab, setTab] = useState(0); // 0: Sign In, 1: Sign Up
   const [signInData, setSignInData] = useState({ username: "", password: "" });
-  const [signUpData, setSignUpData] = useState({
-    firstname: "",
-    lastname: "",
-    age: "",
-    qualification: "",
-    username: "",
-    password: "",
-  });
-
+  const [signUpData, setSignUpData] = useState({ username: "", password: "" });
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const handleSignIn = async () => {
+  const handleSignIn = async (e) => {
+    e.preventDefault();
+    setError("");
     try {
-      const res = await axios.post("http://localhost:8000/api/user-login/", signInData);
+      const res = await axios.post("/api/gameuser-login/", signInData);
       if (res.data.success) {
-        navigate("/games"); // Go to games page
+        localStorage.setItem("user", signInData.username);
+        navigate("/games"); // Redirect to home or user dashboard
       } else {
-        alert("Invalid credentials");
+        setError("Invalid credentials.");
       }
-    } catch (err) {
-      alert("Error during sign in");
+    } catch {
+      setError("Error during sign in");
     }
   };
 
-  const handleSignUp = async () => {
+  const handleSignUp = async (e) => {
+    e.preventDefault();
+    setError("");
     try {
-      const res = await axios.post("http://localhost:8000/user-register/", signUpData);
-      if (res.data.success) {
-        alert("Registered successfully! Please sign in.");
-        setTab(0);
-      }
+      await axios.post("/api/gameuser-register/", signUpData);
+      setTab(0);
+      setSignInData({ username: signUpData.username, password: "" });
     } catch (err) {
-      alert("Error during sign up");
+      setError(
+        err.response?.data?.username?.[0] ||
+        err.response?.data?.password?.[0] ||
+        "Error during sign up"
+      );
     }
   };
 
   return (
-    <Box sx={{ width: "400px", margin: "auto", mt: 5 }}>
-      <Tabs value={tab} onChange={(e, newValue) => setTab(newValue)}>
-        <Tab label="Sign In" />
-        <Tab label="Sign Up" />
-      </Tabs>
-
-      {tab === 0 && (
-        <Box sx={{ mt: 3 }}>
-          <TextField
-            label="Username"
-            fullWidth
-            margin="normal"
-            value={signInData.username}
-            onChange={(e) => setSignInData({ ...signInData, username: e.target.value })}
-          />
-          <TextField
-            label="Password"
-            type="password"
-            fullWidth
-            margin="normal"
-            value={signInData.password}
-            onChange={(e) => setSignInData({ ...signInData, password: e.target.value })}
-          />
-          <Button variant="contained" fullWidth onClick={handleSignIn}>Sign In</Button>
-        </Box>
-      )}
-
-      {tab === 1 && (
-        <Box sx={{ mt: 3 }}>
-          <TextField label="First Name" fullWidth margin="normal"
-            value={signUpData.firstname} onChange={(e) => setSignUpData({ ...signUpData, firstname: e.target.value })} />
-          <TextField label="Last Name" fullWidth margin="normal"
-            value={signUpData.lastname} onChange={(e) => setSignUpData({ ...signUpData, lastname: e.target.value })} />
-          <TextField label="Age" type="number" fullWidth margin="normal"
-            value={signUpData.age} onChange={(e) => setSignUpData({ ...signUpData, age: e.target.value })} />
-          <TextField label="Qualification" fullWidth margin="normal"
-            value={signUpData.qualification} onChange={(e) => setSignUpData({ ...signUpData, qualification: e.target.value })} />
-          <TextField label="Username" fullWidth margin="normal"
-            value={signUpData.username} onChange={(e) => setSignUpData({ ...signUpData, username: e.target.value })} />
-          <TextField label="Password" type="password" fullWidth margin="normal"
-            value={signUpData.password} onChange={(e) => setSignUpData({ ...signUpData, password: e.target.value })} />
-          <Button variant="contained" fullWidth onClick={handleSignUp}>Sign Up</Button>
-        </Box>
-      )}
-    </Box>
+    <div style={{
+      minHeight: "100vh",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      background: "linear-gradient(135deg, #e0e7ff 0%, #f0fdfa 100%)"
+    }}>
+      <div style={{
+        background: "#fff",
+        padding: "2rem 2.5rem",
+        borderRadius: "12px",
+        boxShadow: "0 4px 24px rgba(0,0,0,0.08)",
+        minWidth: "320px"
+      }}>
+        <div style={{ display: "flex", marginBottom: "1.5rem" }}>
+          <button
+            onClick={() => { setTab(0); setError(""); }}
+            style={{
+              flex: 1,
+              border: "none",
+              borderBottom: tab === 0 ? "2px solid #2563eb" : "2px solid #e5e7eb",
+              background: "none",
+              color: tab === 0 ? "#2563eb" : "#64748b",
+              fontWeight: "bold",
+              fontSize: "1rem",
+              padding: "0.5rem",
+              cursor: "pointer"
+            }}
+          >
+            SIGN IN
+          </button>
+          <button
+            onClick={() => { setTab(1); setError(""); }}
+            style={{
+              flex: 1,
+              border: "none",
+              borderBottom: tab === 1 ? "2px solid #2563eb" : "2px solid #e5e7eb",
+              background: "none",
+              color: tab === 1 ? "#2563eb" : "#64748b",
+              fontWeight: "bold",
+              fontSize: "1rem",
+              padding: "0.5rem",
+              cursor: "pointer"
+            }}
+          >
+            SIGN UP
+          </button>
+        </div>
+        {tab === 0 ? (
+          <form onSubmit={handleSignIn}>
+            <input
+              type="text"
+              placeholder="Username"
+              value={signInData.username}
+              onChange={e => setSignInData({ ...signInData, username: e.target.value })}
+              required
+              style={{
+                width: "100%",
+                padding: "0.75rem",
+                borderRadius: "6px",
+                border: "1px solid #cbd5e1",
+                marginBottom: "1rem"
+              }}
+            />
+            <input
+              type="password"
+              placeholder="Password"
+              value={signInData.password}
+              onChange={e => setSignInData({ ...signInData, password: e.target.value })}
+              required
+              style={{
+                width: "100%",
+                padding: "0.75rem",
+                borderRadius: "6px",
+                border: "1px solid #cbd5e1",
+                marginBottom: "1rem"
+              }}
+            />
+            {error && <div style={{ color: "red", marginBottom: "1rem", textAlign: "center" }}>{error}</div>}
+            <button
+              type="submit"
+              style={{
+                width: "100%",
+                padding: "0.75rem",
+                background: "#2563eb",
+                color: "#fff",
+                border: "none",
+                borderRadius: "6px",
+                fontWeight: "bold",
+                fontSize: "1rem",
+                cursor: "pointer"
+              }}
+            >
+              SIGN IN
+            </button>
+          </form>
+        ) : (
+          <form onSubmit={handleSignUp}>
+            <input
+              type="text"
+              placeholder="Username"
+              value={signUpData.username}
+              onChange={e => setSignUpData({ ...signUpData, username: e.target.value })}
+              required
+              style={{
+                width: "100%",
+                padding: "0.75rem",
+                borderRadius: "6px",
+                border: "1px solid #cbd5e1",
+                marginBottom: "1rem"
+              }}
+            />
+            <input
+              type="password"
+              placeholder="Password"
+              value={signUpData.password}
+              onChange={e => setSignUpData({ ...signUpData, password: e.target.value })}
+              required
+              style={{
+                width: "100%",
+                padding: "0.75rem",
+                borderRadius: "6px",
+                border: "1px solid #cbd5e1",
+                marginBottom: "1rem"
+              }}
+            />
+            {error && <div style={{ color: "red", marginBottom: "1rem", textAlign: "center" }}>{error}</div>}
+            <button
+              type="submit"
+              style={{
+                width: "100%",
+                padding: "0.75rem",
+                background: "#2563eb",
+                color: "#fff",
+                border: "none",
+                borderRadius: "6px",
+                fontWeight: "bold",
+                fontSize: "1rem",
+                cursor: "pointer"
+              }}
+            >
+              SIGN UP
+            </button>
+          </form>
+        )}
+      </div>
+    </div>
   );
 }

@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-
 import AnimalGuessLayout from './AnimalGuessLayout';
 
 const AnimalGuess = () => {
@@ -17,70 +16,67 @@ const AnimalGuess = () => {
       try {
         const res = await axios.get('/api/animals/count/', { withCredentials: true });
         setTotalAnimals(res.data.count);
-        console.log("Total animals fetched:", res.data.count);
       } catch (error) {
         setTotalAnimals(null);   
-        console.error        
       }
     };
     fetchTotal();
   }, []);
 
   const fetchNextAnimal = async () => {
-  try {
-    const response = await axios.get('/api/random-animal/', {
-      withCredentials: true,
-    });
-    if (!response.data || Object.keys(response.data).length === 0) {
+    try {
+      const response = await axios.get('/api/random-animal/', { withCredentials: true });
+      if (!response.data || Object.keys(response.data).length === 0) {
+        setAnimal(null);
+        setGameOver(true);
+        setFeedback('No animals found. Game over!');
+        return;
+      }
+      // Check if animal already shown
+      if (shownAnimals.includes(response.data.id)) {
+        if (totalAnimals && shownAnimals.length >= totalAnimals) {
+          setAnimal(null);
+          setGameOver(true);
+          setFeedback('All animals guessed! Game over!');
+          return;
+        }
+        fetchNextAnimal();
+        return;
+      }
+      setAnimal(response.data);
+      setShownAnimals(prev => [...prev, response.data.id]);
+      setGuess('');
+    } catch (error) {
       setAnimal(null);
       setGameOver(true);
       setFeedback('No animals found. Game over!');
-      return;
     }
-    // Check if animal already shown
-    if (shownAnimals.includes(response.data.id)) {
-      if (totalAnimals && shownAnimals.length >= totalAnimals) {
-        setAnimal(null);
-        setGameOver(true);
-        setFeedback('All animals guessed! Game over!');
-        return;
-      }
-      fetchNextAnimal();
-      return;
-    }
-    setAnimal(response.data);
-    setShownAnimals([...shownAnimals, response.data.id]);
-    setGuess('');
-    
-  } catch (error) {
-    setAnimal(null);
-    setGameOver(true);
-    setFeedback('No animals found. Game over!');
-  }
-};
+  };
+
   const submitGuess = async () => {
-  try {
-    const response = await axios.post(
-      '/api/guess-animal/',
-      {
-        id: animal.id,
-        guess: guess.trim().toLowerCase(), // Normalize input
-      },
-      { withCredentials: true }
-    );
-    if (response.data.correct) {
-      setFeedback(`Correct! The animal is ${response.data.answer}.`);
-      setScore(prev => prev + 1);
-      setTimeout(() => {
-        fetchNextAnimal();
-      }, 1000);
-    } else {
-      setFeedback('Incorrect. Try again!');
+    if (!animal) return;
+    try {
+      const response = await axios.post(
+        '/api/guess-animal/',
+        {
+          id: animal.id,
+          guess: guess.trim().toLowerCase(), // Normalize input
+        },
+        { withCredentials: true }
+      );
+      if (response.data.correct) {
+        setFeedback(`Correct! The animal is ${animal.name}.`);
+        setScore(prev => prev + 1);
+        setTimeout(() => {
+          fetchNextAnimal();
+        }, 1000);
+      } else {
+        setFeedback('Incorrect. Try again!');
+      }
+    } catch (error) {
+      setFeedback('Error checking guess.');
     }
-  } catch (error) {
-    setFeedback('Error checking guess.');
-  }
-};
+  };
 
   const stopGame = () => {
     setAnimal(null);
@@ -90,15 +86,14 @@ const AnimalGuess = () => {
   };
 
   const resetGame = () => {
-    setGameOver(false);
-    setShownAnimals([]); // Reset shown animals
-    setScore(0);         // Reset score before fetching new animal
-    setAnimal(null);
-    setGuess('');
-    setFeedback('');
-    fetchNextAnimal();
-  };
-
+  setGameOver(false);
+  setShownAnimals([]);
+  setScore(0);
+  setAnimal(null);
+  setGuess('');
+  setFeedback('');
+  fetchNextAnimal(); // <-- Start the game immediately after reset
+};
   return (
     <AnimalGuessLayout
       animal={animal}

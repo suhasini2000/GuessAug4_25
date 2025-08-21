@@ -1,8 +1,22 @@
 from rest_framework import serializers
+from django.contrib.auth.models import User
 from .models import Animal
 
 class AnimalSerializer(serializers.ModelSerializer):
     class Meta:
         model = Animal
-        fields =  '__all__'  # Include all fields from the Animal model
-        read_only_fields = ['id', 'uploaded_at']  # Make id and uploaded_at read-only
+        fields = '__all__'
+        read_only_fields = ['id', 'uploaded_at']
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'password']
+        extra_kwargs = {'password': {'write_only': True}}
+
+    def create(self, validated_data):
+        user = User.objects.create_user(
+            username=validated_data['username'],
+            password=validated_data['password']
+        )
+        return user

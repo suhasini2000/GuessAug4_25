@@ -44,6 +44,7 @@ export default function UpdateAnimal() {
 
   const handleUpdate = async (e) => {
     e.preventDefault();
+    setError(""); setMessage("");
     const formData = new FormData();
     formData.append("name", originalName);
     formData.append("new_name", animal.name);

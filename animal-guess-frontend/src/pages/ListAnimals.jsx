@@ -5,13 +5,15 @@ import axios from "axios";
 export default function ListAnimals() {
   const [animals, setAnimals] = useState([]);
   const [error, setError] = useState("");
+  const [deletingId, setDeletingId] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     const accessToken = localStorage.getItem("access_token");
-    axios.get("/api/animals/", {
-      headers: { Authorization: `Bearer ${accessToken}` }
-    })
+    axios
+      .get("/api/animals/", {
+        headers: { Authorization: `Bearer ${accessToken}` }
+      })
       .then(res => setAnimals(res.data))
       .catch(() => setError("Failed to load animals."));
   }, []);
@@ -19,6 +21,7 @@ export default function ListAnimals() {
   const handleDelete = async (id) => {
     const accessToken = localStorage.getItem("access_token");
     if (window.confirm("Are you sure you want to delete this animal?")) {
+      setDeletingId(id);
       try {
         await axios.delete(`/api/animals/${id}/`, {
           headers: { Authorization: `Bearer ${accessToken}` }
@@ -26,6 +29,8 @@ export default function ListAnimals() {
         setAnimals(animals.filter(animal => animal.id !== id));
       } catch {
         setError("Failed to delete animal.");
+      } finally {
+        setDeletingId(null);
       }
     }
   };
@@ -79,8 +84,9 @@ export default function ListAnimals() {
                     <button
                       style={deleteBtnStyle}
                       onClick={() => handleDelete(animal.id)}
+                      disabled={deletingId === animal.id}
                     >
-                      Delete
+                      {deletingId === animal.id ? "Deleting..." : "Delete"}
                     </button>
                   </td>
                 </tr>
