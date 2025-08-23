@@ -14,6 +14,13 @@ export default function AdminLogin() {
     try {
       const res = await axios.post("/api/token/", { username, password });
       localStorage.setItem("access_token", res.data.access);
+
+      // Check if user is superuser
+      const superRes = await axios.get("/api/check-superuser/", {
+        headers: { Authorization: `Bearer ${res.data.access}` },
+      });
+      localStorage.setItem("isAdmin", superRes.data.is_superuser ? "true" : "false");
+
       navigate("/admin-dashboard");
     } catch {
       setError("Invalid credentials. Please try again.");
@@ -21,7 +28,7 @@ export default function AdminLogin() {
   };
 
   return (
-    <div style={{
+     <div style={{
       minHeight: "100vh",
       display: "flex",
       alignItems: "center",

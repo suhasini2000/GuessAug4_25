@@ -13,7 +13,7 @@ export default function AdminDashboard() {
       return;
     }
     axios
-      .get("/api/check-superuser/", {
+      .get("http://localhost:5173/api/check-superuser/", {
         headers: { Authorization: `Bearer ${accessToken}` },
       })
       .then((res) => {
